@@ -63,10 +63,10 @@ sock.on('message', msg => {
 
 
 io.on('connection', function(socket){    
-  sock.on('message', msg => {    
-    socket.emit('inittx', initTx);
-    socket.emit('initsn', initSn);
-    socket.emit('initms', initMs);  
+  socket.emit('inittx', initTx);
+  socket.emit('initsn', initSn);
+  socket.emit('initms', initMs);  
+  sock.on('message', msg => {        
     const data = msg.toString().split(' ');
     switch (data[0]) {
       case 'sn':

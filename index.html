@@ -13,7 +13,7 @@
     <meta charset="utf-8">
     <title>the tangle</title>
     <link rel="stylesheet" href="main.css">
-    <script src="vivagraph.js"></script>
+    <script src="vivagraph-orig.js"></script>
     <script src="circleNode.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>    
     <meta name="application-name" content="The IOTA TAngle">
@@ -22,7 +22,7 @@
   </head>
   <script src="socket.io/socket.io.js"></script>
   <body>
-    <div class="graph" id="graph"><canvas width="1664" height="1019"></canvas></div>
+    <div class="graph" id="graph"></div>
     <div id="options">
       <div class="option" data-tooltip="floating tx attach to an old, not displayed, part of the tangle">
         <label class="option-label" for="REMOVE_FLOATING_NODES">
@@ -125,7 +125,7 @@
       <span id="bundle-hash-info"></span>
     </div>
   
-    <script src="main.js"></script>
+    <script src="main-orig.js"></script>
 
     <div class="loader-wrapper" style="display: none;">
       <div class="loader"></div>
