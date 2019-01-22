@@ -30,15 +30,15 @@ $(document).ready(function() {
         graphNodes.update(trunkNode),
         Graph.addNode(tx.hash)
     }
-    function incomingMilestone(milestoneTx) {
-        if (ui = graphics.getNodeUI(milestoneTx), ui) {
-            addTx(graph.getNode(milestoneTx), tx => { incomingConfd(tx.id) }, false);
-            const node = graph.getNode(milestoneTx);
+    function incomingMilestone(milestoneHash) {
+        if (ui = graphics.getNodeUI(milestoneHash), ui) {
+            addTx(graph.getNode(milestoneHash), tx => { incomingConfd(tx.id) }, false);
+            const node = graph.getNode(milestoneHash);
             node && (node.milestone = true, console.log("ms found", ui), graphNodes.update(node))
         }
     }
-    function incomingConfd(nodeId) {
-        const node = graph.getNode(nodeId);
+    function incomingConfd(confirmedHash) {
+        const node = graph.getNode(confirmedHash);
         node && (node.confirmed = true, graphNodes.update(node))
     }
     function addTx(node, t, o, n=false, nodeArray=[]) {
@@ -179,8 +179,7 @@ $(document).ready(function() {
             deleteQueue.length > 0 && (console.log("delete queue len", deleteQueue.length),
             setTimeout(()=>{
                 do {
-                    const nextQueueNode = deleteQueue.shift()
-                      , selectedNode = renderNode.getSelectedNode();
+                    const nextQueueNode = deleteQueue.shift(), selectedNode = renderNode.getSelectedNode();
                     if (!nextQueueNode || selectedNode && nextQueueNode == selectedNode.id)
                         console.log("not deleted");
                     else {

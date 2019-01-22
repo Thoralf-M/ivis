@@ -35,7 +35,7 @@ sock.on('message', msg => {
         console.log("sn: " + initSn.length);  
       break
     case 'lmhs':
-      initMs.push({ hash: data[1]})
+      initMs.push(data[1])
       if (initMs.length > initLimit) {
         initMs.shift();
       }
@@ -71,7 +71,7 @@ io.on('connection', function(socket){
     const data = msg.toString().split(' ');
     switch (data[0]) {
       case 'sn':
-        socket.emit('sn', data[1]);
+        socket.emit('sn', { hash: data[1] });
         break
       case 'lmhs':
         socket.emit('ms', data[1]);
