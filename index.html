@@ -1,10 +1,4 @@
-<h1>
-    Web Socket Example
-</h1>
-<p>
-    open console to see connection.
-</p>
-<script>
+<!-- <script>
     var ws = new WebSocket('ws://localhost:40510');
     ws.onopen = function () {
         console.log('websocket is connected ...')
@@ -13,4 +7,129 @@
     ws.onmessage = function (ev) {
         console.log(ev);
     }
-</script>
+</script> -->
+
+<html><head>
+    <meta charset="utf-8">
+    <title>the tangle</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="vivagraph.js"></script>
+    <script src="circleNode.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>    
+    <meta name="application-name" content="The IOTA TAngle">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="See the IOTA Tangle in action.">
+  </head>
+  <script src="socket.io/socket.io.js"></script>
+  <body>
+    <div class="graph" id="graph"><canvas width="1664" height="1019"></canvas></div>
+    <div id="options">
+      <div class="option" data-tooltip="floating tx attach to an old, not displayed, part of the tangle">
+        <label class="option-label" for="REMOVE_FLOATING_NODES">
+          <span>remove floating tx</span>
+           <input class="tgl tgl-light" id="REMOVE_FLOATING_NODES" type="checkbox" checked="">
+          <div class="tgl-btn"></div>
+       </label>
+      </div>
+      <div class="option" data-tooltip="improves performance by removing old tx">
+        <label class="option-label" for="REMOVE_OLD_NODES">
+          <span>limit to 4k tx</span>
+           <input class="tgl tgl-light" id="REMOVE_OLD_NODES" type="checkbox">
+          <div class="tgl-btn"></div>
+       </label>
+      </div>
+      <div class="option" data-tooltip="improves performance by not calculating physics">
+        <label class="option-label" for="PIN_OLD_NODES">
+          <span>pin old tx</span>
+           <input class="tgl tgl-light" id="PIN_OLD_NODES" type="checkbox" checked="">
+          <div class="tgl-btn"></div>
+       </label>
+      </div>
+      <div class="option" data-tooltip="spawning new tx next to their referenced nodes">
+        <label class="option-label" for="SPAWN_NODE_NEAR_FINAL_POSITION">
+          <span>reduce movement</span>
+           <input class="tgl tgl-light" id="SPAWN_NODE_NEAR_FINAL_POSITION" type="checkbox">
+          <div class="tgl-btn"></div>
+       </label>
+      </div>
+      <div class="option">
+        <label class="option-label" for="SIZE_BY_DEPTH">
+          <span>size by # of confirms</span>
+           <input class="tgl tgl-light" id="SIZE_BY_DEPTH" type="checkbox">
+          <div class="tgl-btn"></div>
+       </label>
+      </div>
+      <div class="option" data-tooltip="only for displayed part of the tangle and own-weight: 1">
+        <label class="option-label" for="SIZE_BY_WEIGHT">
+          <span>size by weight</span>
+           <input class="tgl tgl-light" id="SIZE_BY_WEIGHT" type="checkbox">
+          <div class="tgl-btn"></div>
+       </label>
+      </div>
+      <div class="option">
+        <label class="option-label" for="SIZE_BY_VALUE">
+          <span>size by value</span>
+           <input class="tgl tgl-light" id="SIZE_BY_VALUE" type="checkbox">
+          <div class="tgl-btn"></div>
+       </label>
+      </div>
+      <div class="option" data-tooltip="colors the tx based on the order they were attached">
+        <label class="option-label" for="COLOR_BY_NUMBER">
+          <span>color by order</span>
+           <input class="tgl tgl-light" id="COLOR_BY_NUMBER" type="checkbox">
+          <div class="tgl-btn"></div>
+       </label>
+      </div>
+      <div class="option">
+        <label class="option-label" for="LIGHT_LINKS">
+          <span>lighten links</span>
+          <input class="tgl tgl-light" id="LIGHT_LINKS" type="checkbox">
+          <div class="tgl-btn"></div>
+        </label>
+      </div>
+      <div class="option">
+        <label class="option-label" for="DARK_MODE">
+              <span>dark mode</span>
+               <input class="tgl tgl-light" id="DARK_MODE" type="checkbox">
+              <div class="tgl-btn"></div>
+           </label>
+      </div>
+    </div>
+    <div id="stats">
+      <div id="tips-ratio"></div>
+      <div id="confirmed-ratio"></div>
+      <div id="tps"></div>
+      <div id="node-counter"></div>
+    </div>    
+    <div id="tx-info"></div>
+    <div id="title">
+      <h1>The Tangle</h1><br><br>
+      <div class="legend">
+        <span class="circle" id="tip"></span> tip <br>
+        <span class="circle" id="milestone"></span> milestone <br>
+        <span class="circle" id="node"></span> transaction <br>
+        <span class="circle" id="confirmed"></span> confirmed <br>
+        <br> select a transaction to view<br>
+        <span class="circle" id="confirmed-by-tx"></span> <span id="confirmed-by-count"></span> confirmed by tx<br>
+        <span class="circle" id="confirming-tx"></span> <span id="confirming-count"></span> confirming tx<br>
+        <span class="circle" id="bundle"></span> same bundle <br>
+      </div>
+      <br> enter a tx hash<br>
+      <input id="hash-input" type="text" name="hash" placeholder="hash">
+      <span id="hash-info"></span>
+      <br> enter a tag<br>
+      <input id="tag-input" type="text" name="tag" placeholder="tag or regex">
+      <span id="tag-info"></span>
+      <br> enter a bundle-hash<br>
+      <input id="bundle-hash-input" type="text" name="bundle-hash" placeholder="bundle-hash">
+      <span id="bundle-hash-info"></span>
+    </div>
+  
+    <script src="main.js"></script>
+
+    <div class="loader-wrapper" style="display: none;">
+      <div class="loader"></div>
+      <div class="progress"></div>
+    </div>
+  
+  </body></html>

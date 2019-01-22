@@ -578,13 +578,9 @@ $(document).ready(function() {
         nodesList.update()
     }
     , 3e3);
-    const nodeCntElem = $("#node-counter")
-      , confdRatioElem = $("#confirmed-ratio")
-      , tipsRatioElem = $("#tips-ratio")
-      , tpsElem = $("#tps");
-    let confirmedCount = 1
-      , tipCount = 0
-      , intervalCount = 0;
+    const nodeCntElem = $("#node-counter"), confdRatioElem = $("#confirmed-ratio"), tipsRatioElem = $("#tips-ratio"), tpsElem = $("#tps");
+    let confirmedCount = 1, tipCount = 0, intervalCount = 0;
+    
     websocket.on("initms", ()=>{
         Graph.iterateAllNodes(tx=>{
             tx.confirmed && confirmedCount++,
