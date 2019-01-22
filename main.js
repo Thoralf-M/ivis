@@ -1,20 +1,20 @@
 $(document).ready(function() {
-    function tx_msg(tx) {
-        let t = true;
-        if (graph.getNode(tx.hash))
-            for (link of graph.getNode(tx.hash).links)
+    function incomingTip(tx) {
+        let isTip = true;
+        if (graph.getNode(tx.hash)) {
+            for (link of graph.getNode(tx.hash).links) {
                 if (link.fromId === tx.hash) {
-                    t = false;
+                    isTip = false;
                     break
                 }
+            }
+        }
         settings.SPAWN_NODE_NEAR_FINAL_POSITION && graph.beginUpdate();
         const node = graph.addNode(tx.hash, tx);
-        node.tip = t,
+        node.tip = isTip,
         node.number = node.number || ++totalCount;
-        graph.getNode(tx.transaction_branch),
-        graph.getNode(tx.transaction_trunk);
-        graph.addLink(tx.transaction_branch, tx.hash),
-        graph.addLink(tx.transaction_trunk, tx.hash);
+        graph.getNode(tx.transaction_branch), graph.getNode(tx.transaction_trunk);
+        graph.addLink(tx.transaction_branch, tx.hash), graph.addLink(tx.transaction_trunk, tx.hash);
         const branchNode = graph.getNode(tx.transaction_branch);
         branchNode.tip = false,
         branchNode.number = branchNode.number || ++totalCount;
@@ -22,29 +22,24 @@ $(document).ready(function() {
         trunkNode.tip = false,
         trunkNode.number = trunkNode.number || ++totalCount,
         settings.SPAWN_NODE_NEAR_FINAL_POSITION && graph.endUpdate();
-        for (link of node.links)
+        for (link of node.links) {
             setColor.colorLink(link);
-        nodesList.update(node),
-        nodesList.update(branchNode),
-        nodesList.update(trunkNode),
+        }
+        graphNodes.update(node),
+        graphNodes.update(branchNode),
+        graphNodes.update(trunkNode),
         Graph.addNode(tx.hash)
     }
-    function ms_msg(milestoneTx) {
+    function incomingMilestone(milestoneTx) {
         if (ui = graphics.getNodeUI(milestoneTx), ui) {
-            addTx(graph.getNode(milestoneTx), e=>{
-                sn_msg(e.id)
-            }
-            , false);
-            const t = graph.getNode(milestoneTx);
-            t && (t.milestone = true,
-            console.log("ms found", ui),
-            nodesList.update(t))
+            addTx(graph.getNode(milestoneTx), tx => { incomingConfd(tx.id) }, false);
+            const node = graph.getNode(milestoneTx);
+            node && (node.milestone = true, console.log("ms found", ui), graphNodes.update(node))
         }
     }
-    function sn_msg(e) {
-        const t = graph.getNode(e);
-        t && (t.confirmed = true,
-        nodesList.update(t))
+    function incomingConfd(nodeId) {
+        const node = graph.getNode(nodeId);
+        node && (node.confirmed = true, graphNodes.update(node))
     }
     function addTx(node, t, o, n=false, nodeArray=[]) {
         const list = [node];
@@ -97,31 +92,27 @@ $(document).ready(function() {
     function setBorder(tx, color) {
         const node = graphics.getNodeUI(tx.id);
         node.border_color = color,
-        node.size = 1.4 * _
+        node.size = 1.4 * nodeSize
     }
     function setTagValue(tag) {
         $("#tag-input").val(tag),
-        j && (nodesList.remove(j),
-        j = false);
+        matchesTag && (graphNodes.remove(matchesTag), matchesTag = false);
         const t = tag;
         if (0 != t.length) {
-            var o = new RegExp(t,"i");
-            j = nodesList.add(e=>{
-                e.data && e.data.tag.match(o) && setBorder(e, I)
-            }
-            )
+            var exp = new RegExp(t,"i");
+            matchesTag = graphNodes.add(node => { node.data && node.data.tag.match(exp) && setBorder(node, matchColor) })
         }
     }    
     const confByColor = 4055312383
       , confingColor = 3795711231
       , milestoneColor = 15023471
       , tipColor = 2089150
-      , _ = 30
+      , nodeSize = 30
       , p = 30
       , O = .03
       , oldNodeLimit = 4000
       , E = 1214463
-      , I = 14306089;
+      , matchColor = 14306089;
     let settings = {
         REMOVE_FLOATING_NODES: true,
         COLOR_BY_DEPTH: false,
@@ -157,8 +148,7 @@ $(document).ready(function() {
     }),
     renderer.run();
     const loader = function() {
-        const wrapElem = $(".loader-wrapper")
-          , progElem = $(".loader-wrapper .progress");
+        const wrapElem = $(".loader-wrapper"), progElem = $(".loader-wrapper .progress");
         return {
             start: function() {
                 wrapElem.show()
@@ -318,7 +308,7 @@ $(document).ready(function() {
             }
         }
     }();
-    const nodesList = function() {
+    const graphNodes = function() {
         function updateList(node) {
             if (node)
                 for (var nodeAdd of list)
@@ -368,11 +358,8 @@ $(document).ready(function() {
             }
         }
     }();
-    nodesList.add(setColor.colorNode),
-    nodesList.add(node=>{
-        graphics.getNodeUI(node.id).size = _
-    }
-    );
+    graphNodes.add(setColor.colorNode),
+    graphNodes.add(node => { graphics.getNodeUI(node.id).size = nodeSize });
     let totalCount = 0;
     const search = function() {
         var searchParams = new URLSearchParams(window.location.search);
@@ -393,26 +380,15 @@ $(document).ready(function() {
     }();
     for (let setting in settings)
         search.has(setting) && (settings[setting] = "true" === search.get(setting));
-    var websocket = io.connect("/", {
-        transports: ["websocket"]
-    });
-    websocket.on("tx", msg=>{
-        tx_msg(msg)
-    }
-    ),
-    websocket.on("sn", msg=>{
-        sn_msg(msg.hash)
-    }
-    ),
-    websocket.on("ms", msg=>{
-        ms_msg(msg)
-    }
-    ),
-    websocket.on("inittx", msg=>{
+    var websocket = io.connect("/", { transports: ["websocket"] });
+    websocket.on("tx", msg=>{ incomingTip(msg) }),
+    websocket.on("sn", msg=>{ incomingConfd(msg.hash) }),
+    websocket.on("ms", msg=>{ incomingMilestone(msg) }),
+    websocket.on("inittx", msg => {
         let cnt = 0;
-        for (node of msg)
-            loader.progress(++cnt, 0, msg.length),
-            tx_msg(node);
+        for (node of msg) {
+            loader.progress(++cnt, 0, msg.length), incomingTip(node);    
+        }
         !function() {
             loader.stop();
             var searchParams = new URLSearchParams(window.location.search);
@@ -424,33 +400,30 @@ $(document).ready(function() {
             }
             searchParams.has("clean") && $("div").not("#graph").hide()
         }()
-    }
-    ),
-    websocket.on("initsn", msg=>{
-        for (node of msg)
-            sn_msg(node.hash)
-    }
-    ),
-    websocket.on("initms", msg=>{
-        for (ms of msg)
-            ms_msg(ms)
-    }
-    );
+    }),
+    websocket.on("initsn", msg => {
+        for (tx of msg) {
+            incomingConfd(tx.hash)
+        }            
+    }),
+    websocket.on("initms", msg => {
+        for (tx of msg) {
+            incomingMilestone(tx)
+        }
+    });
     var events = Viva.Graph.webglInputEvents(graphics, graph);
     const renderNode = function() {
         function check(tx) {
             var nodeUI = graphics.getNodeUI(tx.id);
             if (nodeUI) {
-                nodeUI.size = 1.6 * _,
+                nodeUI.size = 1.6 * nodeSize,
                 layout.pinNode(tx, true);
-                var nodesBack = []
-                  , nodesFwd = [];
+                var nodesBack = [], nodesFwd = [];
                 return updateBatch(tx, confingColor, confingColor, true, nodesBack),
                 updateBatch(tx, confByColor, confByColor, false, nodesFwd),
                 function(tx) {
                     return children = false,
-                    graph.forEachLinkedNode(tx.id, (e,t)=>(children = true,
-                    true), true),
+                    graph.forEachLinkedNode(tx.id, (e,t) => (children = true, true), true),
                     children
                 }(tx) || (graphics.getNodeUI(tx.id).border_color = confingColor >>> 8),
                 {
@@ -462,10 +435,10 @@ $(document).ready(function() {
         function updateColor(tx) {
             var nodeUI = graphics.getNodeUI(tx.id);
             nodeUI && (nodeUI.border_color = settings.NODE_COLOR >>> 8,
-            nodesList.update(tx),
+            graphNodes.update(tx),
             layout.pinNode(tx, false),
-            addTx(tx, e=>nodesList.update(e), true, e=>updateColor.colorLink(e)),
-            addTx(tx, e=>nodesList.update(e), false, e=>updateColor.colorLink(e)))
+            addTx(tx, e=>graphNodes.update(e), true, e=>updateColor.colorLink(e)),
+            addTx(tx, e=>graphNodes.update(e), false, e=>updateColor.colorLink(e)))
         }
         function updateBatch(node, t, n, d=false, nodeArray=[]) {
             var nodeId = node.id
@@ -503,10 +476,8 @@ $(document).ready(function() {
                 confingElem.text(""),
                 confByElem.text("")
         }
-        let currNode = null
-          , selectedNode = null
-          , activeNode = null;
-        const txInfoElem = $("#tx-info")
+        let currNode = null, selectedNode = null, activeNode = null;
+                const txInfoElem = $("#tx-info")
           , confByElem = $("#confirmed-by-count")
           , confingElem = $("#confirming-count");
         return {
@@ -575,7 +546,7 @@ $(document).ready(function() {
     }),
     setInterval(()=>{
         renderNode.updateActiveNodeSelection(),
-        nodesList.update()
+        graphNodes.update()
     }
     , 3e3);
     const nodeCntElem = $("#node-counter"), confdRatioElem = $("#confirmed-ratio"), tipsRatioElem = $("#tips-ratio"), tpsElem = $("#tps");
@@ -650,23 +621,23 @@ $(document).ready(function() {
             setHashInput($("#hash-input").val().trim()),
             false
     });
-    let j = false;
+    let matchesTag = false;
     $("#tag-input").keypress(function(e) {
         if (13 == e.which || "Enter" === event.key)
             return e.preventDefault(),
             setTagValue($("#tag-input").val().trim()),
             false
     });
-    let Q = false;
+    let matchesBundle = false;
     $("#bundle-hash-input").keypress(function(e) {
         if (13 == e.which || "Enter" === event.key) {
             e.preventDefault(),
-            Q && (nodesList.remove(Q),
-            Q = false);
+            matchesBundle && (graphNodes.remove(matchesBundle),
+            matchesBundle = false);
             const t = $("#bundle-hash-input").val().trim();
             if (0 == t.length)
                 return;
-            return Q = nodesList.add(e=>{
+            return matchesBundle = graphNodes.add(e=>{
                 e.data && e.data.bundle_hash === t && setBorder(e, 1214463)
             }
             ),
@@ -678,7 +649,7 @@ $(document).ready(function() {
         if ($("#SIZE_BY_VALUE").prop("checked", false),
         $("#SIZE_BY_WEIGHT").prop("checked", false),
         settings.COLOR_BY_DEPTH = !!this.checked,
-        q && (nodesList.remove(q),
+        q && (graphNodes.remove(q),
         q = false),
         settings.COLOR_BY_DEPTH) {
             let t = {};
@@ -694,7 +665,7 @@ $(document).ready(function() {
                 e(t)
             }
             ),
-            q = nodesList.add(o=>{
+            q = graphNodes.add(o=>{
                 t.hasOwnProperty(o.id) || e(o);
                 graphics.getNodeUI(o.id).size = 10 + t[o.id] / graph.getNodesCount() * 80
             }
@@ -705,7 +676,7 @@ $(document).ready(function() {
         if ($("#SIZE_BY_VALUE").prop("checked", false),
         $("#SIZE_BY_DEPTH").prop("checked", false),
         settings.COLOR_BY_WEIGHT = !!this.checked,
-        q && (nodesList.remove(q),
+        q && (graphNodes.remove(q),
         q = false),
         settings.COLOR_BY_WEIGHT) {
             let t = {};
@@ -721,7 +692,7 @@ $(document).ready(function() {
                 e(t)
             }
             ),
-            q = nodesList.add(o=>{
+            q = graphNodes.add(o=>{
                 t.hasOwnProperty(o.id) || e(o);
                 graphics.getNodeUI(o.id).size = 10 + t[o.id] / graph.getNodesCount() * 80
             }
@@ -732,7 +703,7 @@ $(document).ready(function() {
         if ($("#SIZE_BY_DEPTH").prop("checked", false),
         $("#SIZE_BY_WEIGHT").prop("checked", false),
         settings.SIZE_BY_VALUE = !!this.checked,
-        q && (nodesList.remove(q),
+        q && (graphNodes.remove(q),
         q = false),
         settings.SIZE_BY_VALUE) {
             let e = 0;
@@ -741,8 +712,8 @@ $(document).ready(function() {
             }
             ),
             console.log("maxval", e),
-            q = nodesList.add(t=>{
-                t.data && t.data.value && t.data.value > e && nodesList.clearCache();
+            q = graphNodes.add(t=>{
+                t.data && t.data.value && t.data.value > e && graphNodes.clearCache();
                 graphics.getNodeUI(t.id).size = t.data && t.data.value ? 1 + Math.sqrt(1 + Math.abs(+t.data.value) / e * 80 * 80) : 1
             }
             )
@@ -751,9 +722,9 @@ $(document).ready(function() {
     let J = false;
     $("#COLOR_BY_NUMBER").change(function(e) {
         settings.COLOR_BY_NUMBER = !!this.checked,
-        J && (nodesList.remove(J),
+        J && (graphNodes.remove(J),
         J = false),
-        settings.COLOR_BY_NUMBER && (J = nodesList.add(e=>{
+        settings.COLOR_BY_NUMBER && (J = graphNodes.add(e=>{
             graphics.getNodeUI(e.id).border_color = function(e, t, o) {
                 e /= 360,
                 o /= 100;
@@ -801,7 +772,7 @@ $(document).ready(function() {
         settings.NODE_COLOR = settings.DARK_MODE ? 4008636159 : 255,
         settings.NODE_BG_COLOR = settings.DARK_MODE ? 3355443 : 16777215,
         Graph.iterateAllNodes(false, e=>setColor.colorLink(e)),
-        nodesList.clearCache(),
+        graphNodes.clearCache(),
         $("body").toggleClass("dark-mode")
     }),
     websocket.on("config", e=>{
