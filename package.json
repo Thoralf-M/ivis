@@ -2,10 +2,22 @@
     "name": "ivis",
     "version": "0.0.1",
     "description": "iota vis",
+    "scripts": {
+        "lint": "./node_modules/.bin/eslint ."
+    },
     "dependencies": {
         "express": "^4.16.4",
         "iota.lib.js": "^0.5.1",
         "socket.io": "^2.2.0",
         "zeromq": "^5.1.0"
+    },
+    "devDependencies": {
+        "eslint": "^5.12.1",
+        "eslint-config-airbnb-base": "^13.1.0",
+        "eslint-config-prettier": "^3.6.0",
+        "eslint-plugin-babel": "^5.3.0",
+        "eslint-plugin-import": "^2.15.0",
+        "eslint-plugin-prettier": "^3.0.1",
+        "prettier": "^1.16.1"
     }
 }

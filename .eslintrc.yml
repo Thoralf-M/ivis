@@ -1,0 +1,8 @@
+extends: airbnb-base
+rules:
+  import/extensions: off
+  import/newline-after-import: off
+  max-len: off
+  arrow-parens: [2, "always"]
+  no-console: off
+  no-case-declarations: off
