@@ -3,7 +3,7 @@
 Download a copy of this repostory.
 
 ```sh
-git clone https://github.com/iota-cm/ivis/.git
+git clone https://github.com/iota-cm/ivis.git
 ```
 Then visit to the downloaded repository and install dependencies with:
 
