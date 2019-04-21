@@ -5,7 +5,9 @@ Download a copy of this repostory.
 `
 git clone https://github.com/Thoralf-M/ivis
 `
-Then visit to the downloaded repository and install dependencies with:
+
+`cd ivis`
+
 
 `
 npm i
@@ -14,7 +16,7 @@ npm i
 yarn
 `
 
-Start it with:
+
 
 `
 node index.js
