@@ -3,12 +3,15 @@
 Download a copy of this repostory.
 
 ```sh
-git clone https://github.com/iota-cm/ivis.git
+git clone https://github.com/Thoralf-M/ivis
 ```
 Then visit to the downloaded repository and install dependencies with:
 
 ```sh
-npm install
+npm i
+``` or 
+```sh
+yarn
 ```
 
 Start it with:

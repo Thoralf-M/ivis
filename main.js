@@ -103,9 +103,18 @@ $(document).ready(function() {
             matchesTag = graphNodes.add(node => { node.data && node.data.tag.match(exp) && setBorder(node, matchColor) })
         }
     }    
+    function setAddressValue(address) {
+      $("#address-input").val(address),
+      matchesAddress && (graphNodes.remove(matchesTag), matchesTag = false);
+      const t = address;
+      if (0 != t.length) {
+          var exp = new RegExp(t,"i");
+          matchesAddress = graphNodes.add(node => { node.data && node.data.address.match(exp) && setBorder(node, matchColor) })
+      }
+  } 
     const confByColor = 4055312383
-      , confingColor = 3795711231
-      , milestoneColor = 15023471
+      , confingColor = 187476459
+      , milestoneColor = 16261217
       , tipColor = 2089150
       , nodeSize = 30
       , p = 30
@@ -391,7 +400,7 @@ $(document).ready(function() {
         !function() {
             loader.stop();
             var searchParams = new URLSearchParams(window.location.search);
-            if (searchParams.has("hash") ? setHashInput(searchParams.get("hash")) : searchParams.has("tag") && setTagValue(searchParams.get("tag")),
+            if (searchParams.has("hash") ? setHashInput(searchParams.get("hash")) : searchParams.has("tag") && setTagValue(searchParams.get("tag")), searchParams.has("address") && setAddressValue(searchParams.get("address")),
             searchParams.has("tool")) {
                 var script = document.createElement("script");
                 script.src = searchParams.get("tool") + ".js",
@@ -436,8 +445,8 @@ $(document).ready(function() {
             nodeUI && (nodeUI.border_color = settings.NODE_COLOR >>> 8,
             graphNodes.update(tx),
             layout.pinNode(tx, false),
-            addTx(tx, e=>graphNodes.update(e), true, e=>updateColor.colorLink(e)),
-            addTx(tx, e=>graphNodes.update(e), false, e=>updateColor.colorLink(e)))
+            addTx(tx, e=>graphNodes.update(e), true, e=>setColor.colorLink(e)),
+            addTx(tx, e=>graphNodes.update(e), false, e=>setColor.colorLink(e)))
         }
         function updateBatch(node, t, n, d=false, nodeArray=[]) {
             var nodeId = node.id
@@ -466,7 +475,7 @@ $(document).ready(function() {
             if (activeNode) {
                 if (void 0 !== activeNode.data) {
                     const node = renderNode.getActiveNode();
-                    txInfoElem.html("value: " + getValue(+node.data.value) + "i<br>tx tag: " + node.data.tag + "<br>tx hash: " + node.data.hash + "<br>bundle hash (" + node.data.current_index + "|" + node.data.last_index + "): " + node.data.bundle_hash + "<br>")
+                    txInfoElem.html("value: " + getValue(+node.data.value) + "i<br>tx tag: " + node.data.tag + "<br>tx hash: " + node.data.hash + "<br>bundle hash (" + node.data.current_index + "|" + node.data.last_index + "): " + node.data.bundle_hash + "<br>address "+node.data.address)
                 }
                 confingElem.text(t.seenNodesForward.length - 1),
                 confByElem.text(t.seenNodesBackwards.length - 1)
@@ -625,6 +634,13 @@ $(document).ready(function() {
         if (13 == e.which || "Enter" === event.key)
             return e.preventDefault(),
             setTagValue($("#tag-input").val().trim()),
+            false
+    });
+    let matchesAddress = false;
+    $("#address-input").keypress(function(e) {
+        if (13 == e.which || "Enter" === event.key)
+            return e.preventDefault(),
+            setAddressValue($("#address-input").val().trim()),
             false
     });
     let matchesBundle = false;

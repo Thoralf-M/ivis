@@ -6,7 +6,7 @@ body,html {
 }
 
 body {
-    background-color: #fff;
+    background-color: rgb(106, 134, 175);
     margin: 0;
     overflow: hidden;
     font-family: Helvetica,Arial;
@@ -63,7 +63,7 @@ span#tip {
 }
 
 span#milestone {
-    background: #e53d6f;
+    background: #f82061;
     border: 2px solid #000
 }
 
@@ -73,13 +73,13 @@ span#node {
 }
 
 #confirming-tx {
-    background: #f1b727;
+    background: #e7a518;
     border: none
 }
 
 #confirmed-by-tx {
     border: none;
-    background: #e23df4
+    background: #1c1fcc
 }
 
 #bundle {
@@ -110,12 +110,6 @@ span#node {
     padding: 5px
 }
 
-div#donate {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    font-size: 7.5px
-}
 
 div#options {
     position: absolute;

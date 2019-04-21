@@ -7,7 +7,7 @@ const zmq = require('zeromq');
 
 const sock = zmq.socket('sub');
 
-sock.connect('tcp://trinity.iota-tangle.io:5556');
+sock.connect('tcp://perma-1.iota.partners:5556');
 sock.subscribe('tx_trytes');
 sock.subscribe('sn');
 sock.subscribe('lmhs');
@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 
-const initLimit = 2000;
+const initLimit = 20000;
 const initTx = [];
 const initSn = [];
 const initMs = [];
@@ -51,6 +51,7 @@ sock.on('message', (msg) => {
         bundle_hash: tx.bundle,
         current_index: tx.currentIndex,
         last_index: tx.lastIndex,
+        address: tx.address,
         tag: tx.tag,
         value: tx.value,
       };
@@ -86,6 +87,7 @@ io.on('connection', (socket) => {
           bundle_hash: tx.bundle,
           current_index: tx.currentIndex,
           last_index: tx.lastIndex,
+          address: tx.address,
           tag: tx.tag,
           value: tx.value,
         };
