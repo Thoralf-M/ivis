@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 
-const initLimit = 20000;
+const initLimit = 10000;
 const initTx = [];
 const initSn = [];
 const initMs = [];
