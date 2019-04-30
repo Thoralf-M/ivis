@@ -115,7 +115,8 @@ $(document).ready(function() {
     const confByColor = 4055312383
       , confingColor = 187476459
       , milestoneColor = 16261217
-      , tipColor = 2089150
+      , tipColor = 7153395
+      // , tipColor = 74569524
       , nodeSize = 30
       , p = 30
       , O = .03
