@@ -6,6 +6,8 @@
         "lint": "./node_modules/.bin/eslint ."
     },
     "dependencies": {
+        "@iota/core": "^1.0.0-beta.23",
+        "@iota/transaction-converter": "^1.0.0-beta.23",
         "express": "^4.16.4",
         "iota.lib.js": "^0.5.1",
         "socket.io": "^2.2.0",
