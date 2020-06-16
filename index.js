@@ -8,7 +8,7 @@ const zmq = require('zeromq');
 const sock = zmq.socket('sub');
 
 sock.connect('tcp://perma-1.iota.partners:5556');
-sock.subscribe('tx_trytes');
+sock.subscribe('trytes');
 sock.subscribe('sn');
 sock.subscribe('lmhs');
 
